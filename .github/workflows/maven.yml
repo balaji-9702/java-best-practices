@@ -37,6 +37,11 @@ jobs:
         files:  java-best-practices/target/java-best-practices-0.0.1-SNAPSHOT.jar
         dest:   java-best-practices/artifact.zip
 
+    - name: Ensure Presence of zip file
+      run:  |
+         cd java-best-practices/
+         ls -lrt   
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -47,6 +52,8 @@ jobs:
        release_name: "${{ github.run_id }}"
        draft: false
        prerelease: false
+
+   
 
     - name: Upload Release 
       uses: actions/upload-release-asset@v1
