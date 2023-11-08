@@ -29,6 +29,34 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    
+    - name: Zip output
+      uses: vimtor/action-zip@v1.1
+      with:
+        #args: zip -qq -r artifact.zip   -d New-Java-proj-Workflow/onlinebookstore-J2EE/target/*.war 
+        files:  java-best-practices/target/java-best-practices-0.0.1-SNAPSHOT.jar
+        dest:   java-best-practices/artifact.zip
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      with:
+       tag_name: "${{ github.run_id }}"
+       release_name: "${{ github.run_id }}"
+       draft: false
+       prerelease: false
+
+    - name: Upload Release 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: java-best-practices/artifact.zip
+        asset_name: artifact.zip
+        asset_content_type: application/zip
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
   #  - name: Update dependency graph
